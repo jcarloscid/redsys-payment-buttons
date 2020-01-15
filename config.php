@@ -19,13 +19,13 @@ define( 'REDSYS_TERMINAL', '001');
 define( 'REDSYS_CURRENCY', '978');
 
 // URL para la recepción de confirmaciones de pago
-define( 'REDSYS_URL_MERCHANT', 'https://misite.com/whereever-installed/payment/return.php');
+define( 'REDSYS_URL_MERCHANT', 'https://misite.com/whereever-installed/redsys-payment-buttons/return.php');
 
 // URL de vuelta en operaciones de pago con éxito (por defecto)
-define( 'REDSYS_URL_OK', 'https://misite.com/whereever-installed//payment/test-ok.php');
+define( 'REDSYS_URL_OK', 'https://misite.com/whereever-installed/redsys-payment-buttons/payment-ok.php');
 
 // URL de vuelta en operaciones de pago con errores (por defecto)
-define( 'REDSYS_URL_KO', 'https://misite.com/whereever-installed//payment/test-ko.php');
+define( 'REDSYS_URL_KO', 'https://misite.com/whereever-installed/redsys-payment-buttons/payment-ko.php');
 
 // Indica si se debe escribir información en el log sobre las operaciones de confirmación procesadas
 define( 'REDSYS_LOG', true );
