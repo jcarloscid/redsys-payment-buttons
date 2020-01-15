@@ -5,14 +5,14 @@ Permite crear a una aplicación genérica en PHP botones de pago a través de la
 
 ## Instalación y configuración 
 
-Instala el repositorio en un subdirectorio de tu aplicación (eg. `payments`)
+Instala el repositorio en un subdirectorio de tu aplicación (eg. `redsys-payment-buttons`)
 
 Debes revisar y ajustar a tu instalación el fichero `config.php`
 
 ## Cómo crear un botón de pago
 
 ```
-require_once( 'payments/include/functions.php' );
+require_once( 'redsys-payment-buttons/include/functions.php' );
 
 $orderNumber =  redsys_ramdom_order();
 echo redsys_button(123.45, $orderNumber, "Descripción de mi pedido", "datos-adicionales-de-mi-pedido");
@@ -49,7 +49,7 @@ if ( $response['correctPayment'] ) {
 Aunque no tienes por que usar este módulo, dado que la URL de respuesta hacia la tienda es uno de los parámtros que se configura en `config.php`. Lo que si tienes que hacer es incluir en tu módulo este código:
 
 ```
-require_once( 'payments/include/functions.php' );
+require_once( 'redsys-payment-buttons/include/functions.php' );
 
 $response = redsys_process_response();
 ```
