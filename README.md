@@ -89,6 +89,6 @@ A la vuelta de una operación de pago, la aplicación volverá a recibir el cont
 * `$urlOK`: Si el pago ha sido considerado correcto.
 * `$urlKO`: Si el pago ha sido considerado erróneo.
 
-El propósito de estas URLS es simplemente continuar la navegación del usuario y es posible que ambas se dirijan hacia el mismo destino. Dependiendo de cómo esté configurada la pasarela estas URLS podrían recibir por parámetros el resultado de la operación, pero se desaconseja trabajar de esta manera, y en su lugar procesar la respuesta en la URL configurada en `REDSYS_URL_TPV` (donde no se permite mostrar salida HTML).
+El propósito de estas URLS es simplemente continuar la navegación del usuario y es posible que ambas se dirijan hacia el mismo destino. Dependiendo de cómo esté configurada la pasarela estas URLS podrían recibir por parámetros el resultado de la operación, pero se desaconseja trabajar de esta manera, y en su lugar procesar la respuesta en la URL configurada en `REDSYS_URL_MERCHANT` (donde no se permite mostrar salida HTML).
 
 Si estos parámetros no se indican en la creación del botón, se usaran los valores por defecto configurados en `config.php` para `REDSYS_URL_OK` y `REDSYS_URL_KO` respectivamente.
