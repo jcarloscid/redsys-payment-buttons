@@ -6,9 +6,9 @@ require_once( __DIR__ . '/apiRedsys7.php' );
 /**
  * Genera una cadena de caracteres de forma aleatoria.
  * NO HAY GARANTIA DE QUE LAS CADENAS SEAN ÚNICAS.
- * 
+ *
  * @return string Cadena alfanumérica generada.
- */ 
+ */
 function redsys_ramdom_order() {
 	$length = 12;
     $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -30,14 +30,14 @@ function redsys_ramdom_order() {
  * @param  string $urlKO		URL a la que enviar la petición si hay errores en el pago.
  * @param  string $btnText		Texto del botón de pago.
  * @param  string $btnClass		Clase(s) CSS para el botón.
- * @param  string $formName		Nombre y también ID del formulario (necesario si se pintan varios botones). 
+ * @param  string $formName		Nombre y también ID del formulario (necesario si se pintan varios botones).
  * @return string               Fragmento de código HTML para pintar el botón.
  */
 function redsys_button($price, $orderNumber, $description, $data = '', $urlOK = REDSYS_URL_OK, $urlKO = REDSYS_URL_KO, $btnText = 'Realizar pago', $btnClass = 'btn btn-primary', $formName = 'from') {
 
     $apiObj = new RedsysAPI;
-    
-    $version         = "HMAC_SHA256_V1"; 
+
+    $version         = "HMAC_SHA256_V1";
     $url_tpv         = REDSYS_URL_TPV;
     $key             = REDSYS_KEYCODE;
     $name            = REDSYS_NAME;
@@ -50,18 +50,18 @@ function redsys_button($price, $orderNumber, $description, $data = '', $urlOK = 
     $urlMerchant     = REDSYS_URL_MERCHANT;
 
     $apiObj->setParameter("DS_MERCHANT_ORDER",              $orderNumber);
-    $apiObj->setParameter("DS_MERCHANT_AMOUNT",             $amount);
+    $apiObj->setParameter("DS_MERCHANT_AMOUNT",             (string)$amount);
     $apiObj->setParameter("DS_MERCHANT_CURRENCY",           $currency);
     $apiObj->setParameter("DS_MERCHANT_MERCHANTCODE",       $code);
     $apiObj->setParameter("DS_MERCHANT_TERMINAL",           $terminal);
     $apiObj->setParameter("DS_MERCHANT_TRANSACTIONTYPE",    $transactionType);
-    $apiObj->setParameter("DS_MERCHANT_PRODUCTDESCRIPTION", $description);    
+    $apiObj->setParameter("DS_MERCHANT_PRODUCTDESCRIPTION", $description);
     $apiObj->setParameter("DS_MERCHANT_MERCHANTURL",        $urlMerchant);
-    $apiObj->setParameter("DS_MERCHANT_URLOK",              $urlOK);      
+    $apiObj->setParameter("DS_MERCHANT_URLOK",              $urlOK);
     $apiObj->setParameter("DS_MERCHANT_URLKO",              $urlKO);
-    $apiObj->setParameter("DS_MERCHANT_MERCHANTNAME",       $name); 
-    $apiObj->setParameter("DS_MERCHANT_CONSUMERLANGUAGE",   $consumerlng);    
-	$apiObj->setParameter("DS_MERCHANT_MERCHANTDATA", 		$data);    
+    $apiObj->setParameter("DS_MERCHANT_MERCHANTNAME",       $name);
+    $apiObj->setParameter("DS_MERCHANT_CONSUMERLANGUAGE",   $consumerlng);
+	$apiObj->setParameter("DS_MERCHANT_MERCHANTDATA", 		$data);
 
     $params    = $apiObj->createMerchantParameters();
     $signature = $apiObj->createMerchantSignature($key);
@@ -85,7 +85,7 @@ function redsys_button($price, $orderNumber, $description, $data = '', $urlOK = 
  * - correctPayment (boolean): Indica si la operación de pago se considera correcta (aprobada).
  */
 function redsys_process_response() {
-	
+
 	$response['genuine']        = false;
 	$response['correctPayment'] = false;
 
@@ -106,8 +106,8 @@ function redsys_process_response() {
 		 * y decodificar los parámetros enviados.
 		 */
 		$computedSignature = $apiObj->createMerchantSignatureNotif(REDSYS_KEYCODE, $params);
-		$decodec           = $apiObj->decodeMerchantParameters($params);	
-		
+		$decodec           = $apiObj->decodeMerchantParameters($params);
+
 		/*
 		 * Extrae cada uno de los parámetros posibles en la respuesta.
 		 */
@@ -116,7 +116,7 @@ function redsys_process_response() {
 		$response['amount']          = $apiObj->getParameter('Ds_Amount');
 		$response['currency']        = $apiObj->getParameter('Ds_Currency');
 		$response['order']           = $apiObj->getParameter('Ds_Order');
-		$response['merchantCode']    = $apiObj->getParameter('Ds_MerchantCode');		
+		$response['merchantCode']    = $apiObj->getParameter('Ds_MerchantCode');
 		$response['terminal']        = $apiObj->getParameter('Ds_Terminal');
 		$response['code']            = $apiObj->getParameter('Ds_Response');
 		$response['data']            = $apiObj->getParameter('Ds_MerchantData');
@@ -125,24 +125,24 @@ function redsys_process_response() {
 		$response['autorisation']    = $apiObj->getParameter('Ds_AuthorisationCode');
 		$response['consumerLang']    = $apiObj->getParameter('Ds_ConsumerLanguage');
 		$response['cardNumber']      = $apiObj->getParameter('Ds_Card_Number');
-		
+
 		if ( empty($response['cardCountry'])   ) $response['cardCountry']  = 'Not set';
 		if ( empty($response['autorisation'])  ) $response['autorisation'] = 'Not set';
-		if ( empty($response['consumerLang']) || 
+		if ( empty($response['consumerLang']) ||
 			 $response['consumerLang'] == '0'  ) $response['consumerLang'] = 'Not set';
 		if ( empty($response['cardNumber'])    ) $response['cardNumber']  = 'Not set';
 
 		switch ($apiObj->getParameter('Ds_SecurePayment')) {
-			case '0': 
+			case '0':
 				$response['secure'] = 'Not secure';
 				break;
-			case '1': 
+			case '1':
 				$response['secure'] = 'Secure';
 				break;
 			default:
-				$response['secure'] = 'Unknown';		
+				$response['secure'] = 'Unknown';
 		}
-		
+
 		if ( !empty($apiObj->getParameter('Ds_Card_Type')) ) {
 			switch ($apiObj->getParameter('Ds_Card_Type')) {
 				case 'C':
@@ -157,7 +157,7 @@ function redsys_process_response() {
 		} else {
 			$response['cardType'] = 'Not set';
 		}
-				
+
 		if ( !empty($apiObj->getParameter('Ds_Card_Brand')) ) {
 			switch ($apiObj->getParameter('DS_Card_Brand')) {
 				case '1':
@@ -187,37 +187,37 @@ function redsys_process_response() {
 		} else {
 			$response['cardBrand'] = 'Not set';
 		}
-			
+
 		/*
-		 * Comparamos la firma enviada y la firma generada para 
+		 * Comparamos la firma enviada y la firma generada para
 		 * validar que el mensaje sea genuino.
 		 */
-		if ($receivedSignature === $computedSignature) {			
-			
-			/* 
+		if ($receivedSignature === $computedSignature) {
+
+			/*
 			 * Es genuino
 			 */
 			$response['genuine'] = true;
-			
+
 			/* Valida el código de respuesta para saber si es una operación aceptada */
-			if ( strlen($response['code']) === 3 && substr($response['code'], 0, 1) === '0') 
+			if ( strlen($response['code']) === 3 && substr($response['code'], 0, 1) === '0')
 				$response['correctPayment'] = true;
-			elseif ( strlen($response['code']) === 4 && substr($response['code'], 0, 2) === '00') 
+			elseif ( strlen($response['code']) === 4 && substr($response['code'], 0, 2) === '00')
 				$response['correctPayment'] = true;
-							
-			/* 
+
+			/*
 			 * Si el log está activado, en función de si el pago ha sido aprobado o no
 			 * genera un mensaje en el log con los datos de la operación.
 			 */
 			if ( REDSYS_LOG ) {
-				if ( $response['correctPayment'] ) {				
+				if ( $response['correctPayment'] ) {
 					error_log("REDSYS Approved Payment notification VALID Signature Signature=[{$receivedSignature}] for " . json_encode($response));
 				} else {
 					error_log("REDSYS Denied Payment notification VALID Signature Signature=[{$receivedSignature}] for " . json_encode($response));
-				}	
+				}
 			}
 		} else {
-			/* 
+			/*
 			 * ¡¡¡NO es genuino!!!
 			 */
 			if ( REDSYS_LOG ) {
@@ -225,6 +225,6 @@ function redsys_process_response() {
 			}
 		}
 	}
-	
+
 	return $response;
 }
